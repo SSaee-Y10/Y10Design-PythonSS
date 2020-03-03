@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<!-- Welcome to some sample code to control your Firebase Database -->
+<!-- HERE IS YOUR HTML TO SET UP YOUR PAGE -->
+<html>
+    <head>
+        <!-- HERE ARE YOUR FIREBASE and GOOGLE AUTHENICATION IMPORTS -->
+        <!-- The core Firebase JS SDK is always required and must be listed first -->
+        <script src="https://www.gstatic.com/firebasejs/7.6.0/firebase-app.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/7.6.0/firebase-analytics.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/7.6.0/firebase-auth.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/7.6.0/firebase-database.js"></script>
+        <script src="https://apis.google.com/js/platform.js" async defer></script>
+
+        <!-- Add SDKs for Firebase products that you want to use 
+          https://firebase.google.com/docs/web/setup#available-libraries -->
+
+    <style>
+
+
+          h1.features {
+          text-align: center;
+          color: yellow;
+          background-color: tomato;
+          >}
+
+          p.features {
+          text-align: center;
+          color: blue;
+          }
+        
+          h1 {
+            border: 3px solid red;
+            padding: 10px; /* This the space between the text and the red border */
+            border-bottom-left-radius: 25px;
+          }
+
+          h2 {
+            border: 3px dotted red;
+          }
+
+          .grid-container {
+            display: grid;
+            grid-template-columns: auto auto auto;
+            background-color: #fcf56a;
+            padding: 10px;
+          }
+
+          .grid-item {
+            background-color: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            font-size: 30px;
+            text-align: center;
+          }
+
+          
+
+	</style>
+
+    
+ 
+    </head>
+    
+    <!--body-->
+    <body style="background-color:#ffd500;">
+
+    <h1 id="uid"></h1>
+
+    <div><img src="LogoMakr_7EBf0F.png" alt="LogoMakr_7EBf0F.png" width="200" height="200"></div>
+
+    <h1 class="features">My Food</h1>
+
+    <h1>How does it work ?</h1>
+    <h2>My Food App is a product that recomands restaurants with their adress based on the food requested from the users. </h3>
+    <h1>Provide the information Below.</h1>
+    <h3>please click on the set data button and write all in lower case without any spacing. </h3>
+
+    <!-- -->
+        <button onclick = "signin()" >Sign In</button></div>
+            
+
+        <div></div>
+        <div><button onclick = "setRestaurantData()" >Set Data</button></div>
+
+        <p>Search By:</p>
+
+        <div><input type="text" id="favfood" value="food" size="100"></div>
+        <div><button onclick = "searchByFood()" >Search By Food</button></div>             
+        <div><input type="text" id="favdrink" value="drink" size="100"></div>
+        <div><button onclick = "searchByDrink()" >Search By Drink</button></div>
+        <div><input type="text" id="favside" value="sideorder" size="100"></div>
+        <div><button onclick = "searchBySideOrder()" >Search By Side Order</button></div>
+
+
+            
+        <p>Current Data:</p>
+
+            <!-- ol means ordered list -->
+            <p><ol id="locationList"></ol></p>    
+                 
+    </body>
+    
+
+    <!-- HERE IS THE JAVASCRIPT TO CONNECT TO YOUR FIREBASE -->
+    <script>
+
+        // Variables created here to be used throughout the program
+
+        var provider = new firebase.auth.GoogleAuthProvider();
+        var userId = document.getElementById("uid").innerHTML;
+        
+        // Your web app's Firebase configuration that we copy-and-paste from 
+        // the Firebase setup
+        var config = {
+
+
+        apiKey: "AIzaSyDoVTrbQ_vRVUXwx-7fdYnl-kVJO10U7TM",
+        authDomain: "design-10.firebaseapp.com",
+        databaseURL: "https://design-10.firebaseio.com",
+        projectId: "design-10",
+        storageBucket: "design-10.appspot.com",
+        messagingSenderId: "1081349381290",
+        appId: "1:1081349381290:web:9de98802e61470b67744d3",
+        measurementId: "G-E63HEE4H9P"
+          
+        };
+
+        firebase.initializeApp(config);
+        //firebase.analytics();
+
+        // Authentication Check: to see if you are logged in
+        firebase.auth().onAuthStateChanged(function(user) {
+            if (user == null) {
+                document.getElementById("uid").innerHTML = "not logged in";
+                return;
+            } else {
+                userId = user.uid; 
+                document.getElementById("uid").innerHTML = userId; // display Google uid on page
+                
+            } // end user null check
+        }); // end check auth state
+
+
+        // Functions that will be used to "get" and "set" data, among other "helper"
+        // functions too...
+
+        function signin() {
+            var provider = new firebase.auth.GoogleAuthProvider();
+            firebase.auth().signInWithRedirect(provider).then(function(result) { 
+                window.location.replace("fbtest.html");
+            });
+        } // end signin 
+
+
+        
+       function setRestaurantData() {
+
+            // Create a database object that we can refer to
+            var db = firebase.database();
+
+            // Create a reference to a particular location or "node" called StudentInfo
+            var refGTA = db.ref('Food/Toronto');
+
+            var restaurant1 = {
+
+            nameaddress: "mcdonald's on 120 Yonge St.",   
+            mainfood: "cheeseburger", 
+            drink: "coke",
+            sideorder: "fries",
+            type: "fastfood",
+            rank: 1
+
+            }
+
+            var restaurant2 = {
+
+            nameaddress: "hamoudi's on 1920 Bay St.",
+            mainfood: "hummus", 
+            drink: "smoothie",
+            sideorder: "kibbie",
+            type: "middle-eastern",
+            rank: 2
+
+            }
+
+            
+
+            var restaurant3 = {
+
+            nameaddress: "995 Bay St, Toronto, ON M5S 3C4.",
+            mainfood: "kebab", 
+            drink: "sprite",
+            sideorder: "salad",
+            type: "Persian",
+            rank: 3
+
+            }
+
+
+            var restaurant4 = {
+
+            nameaddress: "1 Benvenuto Pl, Toronto, ON M4V 2L1.",
+            mainfood: "pasta", 
+            drink: "mojito",
+            sideorder: "tomatosalad",
+            type: "French",
+            rank: 4
+
+            }
+
+            var restaurant5 = {
+
+            nameaddress: "Evoo on 138 Avenue Rd, Toronto, ON M5R 2H6",
+            mainfood: "pizza", 
+            drink: "coke",
+            sideorder: "bread",
+            type: "italian",
+            rank: 5
+
+            }
+
+             var restaurant6 = {
+
+            nameaddress: "piano piano on 88 Harbord St", 
+            mainfood: "pasta",
+            drink: "pebsi",
+            sideorder: "bread",
+            type: "italian",
+            rank: 6
+
+            }
+
+            var restaurant7 = {
+
+            nameaddress: "fresh on 90 Eglinton Ave E, Toronto, ON M4P 1A6", 
+            mainfood: "freshhummus",
+            drink: "juice",
+            sideorder: "soup",
+            type: "vegan",
+            rank: 7
+
+            }
+
+            var restaurant8 = {
+
+            nameaddress: "fresh on 90 Eglinton Ave E, Toronto, ON M4P 1A6", 
+            mainfood: "vegan",
+            drink: "juice",
+            sideorder: "soup",
+            type: "vegan",
+            rank: 8
+
+            }
+
+            var restaurant9 = {
+
+            nameaddress: "piano piano on 88 Harbord St", 
+            mainfood: "italian",
+            drink: "pebsi",
+            sideorder: "bread",
+            type: "italian",
+            rank: 9
+
+            }
+            
+            var restaurant10 = {
+
+            nameaddress: "1 Benvenuto Pl, Toronto, ON M4V 2L1.",
+            mainfood: "french", 
+            drink: "mojito",
+            sideorder: "tomatosalad",
+            type: "French",
+            rank: 10
+
+            }
+
+            var restaurant11 = {
+
+            nameaddress: "995 Bay St, Toronto, ON M5S 3C4.",
+            mainfood: "persian", 
+            drink: "sprite",
+            sideorder: "salad",
+            type: "Persian",
+            rank: 11
+
+            }
+
+            var restaurant12 = {
+
+            nameaddress: "Fat pasha on 414 Dupont St, Toronto, ON M5R 1V9.",
+            mainfood: "middle-eastern", 
+            drink: "tea",
+            sideorder: "salad",
+            type: "Persian",
+            rank: 12
+
+            }
+
+            var restaurant13 = {
+
+            nameaddress: "pukka on 778 St Clair Ave W, Toronto, ON M6C 1B6.",
+            mainfood: "indian", 
+            drink: "sprite",
+            sideorder: "salad",
+            type: "Persian",
+            rank: 13
+
+            }
+
+            var restaurant14 = {
+
+            nameaddress: "The Burger Shack on 233 Eglinton Ave W, Toronto, ON M4R 1A9.",
+            mainfood: "burger", 
+            drink: "canadadry",
+            sideorder: "salad",
+            type: "Persian",
+            rank: 14
+
+            }
+
+
+
+
+
+
+
+            
+            // "PUSH" means we add something to the database
+            refGTA.push(restaurant1);
+            refGTA.push(restaurant2);
+            refGTA.push(restaurant3);
+            refGTA.push(restaurant4);
+            refGTA.push(restaurant5);
+            refGTA.push(restaurant6);
+            refGTA.push(restaurant7);
+            refGTA.push(restaurant8);
+            refGTA.push(restaurant9);
+            refGTA.push(restaurant10);
+            refGTA.push(restaurant11);
+            refGTA.push(restaurant12);
+            refGTA.push(restaurant13);
+            refGTA.push(restaurant14);
+            
+
+            }
+ 
+
+
+        function searchByFood(){
+
+            document.getElementById("locationList").innerHTML = "";
+
+            var seekByFood = document.getElementById("favfood").value;
+
+            var returnArr = [];
+
+            // Make a call to read the whole database and store as an array
+
+            firebase.database().ref('Food/Toronto').on('value', function(snapshot) {
+            // console.log("we are now searching here")
+
+                snapshot.forEach(function(childSnapshot) {
+                var item = childSnapshot.val();
+                item.key = childSnapshot.key;
+                returnArr.push(item);
+                });
+
+                // search the array
+                for(var i = 0; i < returnArr.length; i++){
+
+                    if(returnArr[i].mainfood == seekByFood){
+                        console.log(returnArr[i]);
+                        console.log("match!")
+
+                        // add in a node because we have a match
+                        var displayRestaurant = JSON.stringify(returnArr[i].nameaddress);
+                        var oListCoordinates = document.getElementById('locationList');
+                        var entry = document.createElement('li'); // a list element to be added to the ordered list
+                        entry.appendChild(document.createTextNode(displayRestaurant));
+                        oListCoordinates.appendChild(entry);
+              
+                        } //end if
+                    } // end for
+
+          
+              console.log(returnArr);
+                    
+              return returnArr;  
+
+            });   
+            
+        } //end searchArray()
+
+        function searchByDrink(){
+
+            document.getElementById("locationList").innerHTML = "";
+
+            var seekByDrink = document.getElementById("favdrink").value;
+
+            var returnArr = [];
+
+            // Make a call to read the whole database and store as an array
+
+            firebase.database().ref('Food/Toronto').on('value', function(snapshot) {
+            // console.log("we are now searching here")
+
+                snapshot.forEach(function(childSnapshot) {
+                var item = childSnapshot.val();
+                item.key = childSnapshot.key;
+                returnArr.push(item);
+                });
+
+                // search the array
+                for(var i = 0; i < returnArr.length; i++){
+
+                    if(returnArr[i].drink == seekByDrink){
+                        console.log(returnArr[i]);
+                        console.log("match!")
+
+                        // add in a node because we have a match
+                        var displayRestaurant = JSON.stringify(returnArr[i].nameaddress);
+                        var oListCoordinates = document.getElementById('locationList');
+                        var entry = document.createElement('li'); // a list element to be added to the ordered list
+                        entry.appendChild(document.createTextNode(displayRestaurant));
+                        oListCoordinates.appendChild(entry);
+              
+                        } //end if
+                    } // end for
+
+          
+              console.log(returnArr);
+                    
+              return returnArr;  
+
+            });   
+            
+        } //end searchArray()
+
+        function searchBySideOrder(){
+
+            document.getElementById("locationList").innerHTML = "";
+
+            var seekBySideOrder = document.getElementById("favside").value;
+
+            var returnArr = [];
+
+            // Make a call to read the whole database and store as an array
+
+            firebase.database().ref('Food/Toronto').on('value', function(snapshot) {
+            // console.log("we are now searching here")
+
+                snapshot.forEach(function(childSnapshot) {
+                var item = childSnapshot.val();
+                item.key = childSnapshot.key;
+                returnArr.push(item);
+                });
+
+                // search the array
+                for(var i = 0; i < returnArr.length; i++){
+
+                    if(returnArr[i].sideorder == seekBySideOrder){
+                        console.log(returnArr[i]);
+                        console.log("match!")
+
+                        // add in a node because we have a match
+                        var displayRestaurant = JSON.stringify(returnArr[i].nameaddress);
+                        var oListCoordinates = document.getElementById('locationList');
+                        var entry = document.createElement('li'); // a list element to be added to the ordered list
+                        entry.appendChild(document.createTextNode(displayRestaurant));
+                        oListCoordinates.appendChild(entry);
+              
+                        } //end if
+                    } // end for
+
+          
+              console.log(returnArr);
+                    
+              return returnArr;  
+
+            });   
+            
+        } //end searchArray()
+       
+        function errData(err){
+            console.log('Error!')
+            console.log(err)
+        }
+
+    </script>
+</html>
