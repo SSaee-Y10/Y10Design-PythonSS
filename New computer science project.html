@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<!-- Welcome to some sample code to control your Firebase Database -->
+<!-- HERE IS YOUR HTML TO SET UP YOUR PAGE -->
+<html>
+    <head>
+        <!-- HERE ARE YOUR FIREBASE and GOOGLE AUTHENICATION IMPORTS -->
+        <!-- The core Firebase JS SDK is always required and must be listed first -->
+        <script src="https://www.gstatic.com/firebasejs/7.6.0/firebase-app.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/7.6.0/firebase-analytics.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/7.6.0/firebase-auth.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/7.6.0/firebase-database.js"></script>
+        <script src="https://apis.google.com/js/platform.js" async defer></script>
+
+        <!-- Add SDKs for Firebase products that you want to use 
+          https://firebase.google.com/docs/web/setup#available-libraries -->
+
+    <style>
+
+
+          h1.features {
+          text-align: center;
+          color: white;
+          background-color: green;
+          >}
+
+          p.features {
+          text-align: center;
+          color: blue;
+          }
+        
+          h1 {
+            border: 3px black;
+            padding: 10px; /* This the space between the text and the red border */
+            border-bottom-left-radius: 25px;
+          }
+
+          h2 {
+            border: 3px dotted green;
+          }
+
+          .grid-container {
+            display: grid;
+            grid-template-columns: auto auto auto;
+            background-color: #fcf56a;
+            padding: 10px;
+          }
+
+          .grid-item {
+            background-color: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            font-size: 30px;
+            text-align: center;
+          }
+
+          
+
+	</style>
+
+    
+ 
+    </head>
+    
+    <!--body-->
+    <body style="background-color:#06D0C4;">
+
+    <h1 id="uid"></h1>
+
+    <div><img src="Time management logo.png" alt="Time management logo.png" width="200" height="200"></div>
+
+    <h1 class="features">Time management plan maker</h1>
+
+    <h1>How does it work ?</h1>
+    <h2>Time management is one the most important things in these days. We can all achieve the best results in our tasks but the only thing that will stop us from this is the lack of time. With time management plan maker we can stop wasting time and use our time wisly.</h3>
+    <h1>Insert your plans in the table below.</h1>
+    <h3>please click on the set data button and write all in lower case without any spacing. </h3>
+
+    <!-- -->
+        <button onclick = "signin()" >Sign In</button></div>
+            
+
+        <div></div>
+        <div><button onclick = "setRestaurantData()" >Set Data</button></div>
+
+        <p>Search By:</p>
+
+        <div><input type="text" id="plan" value="plan" size="100"></div>
+        <div><button onclick = "searchbyplan()" >search your plan</button></div>             
+        <div><input type="text" id="time" value="time" size="100"></div>
+        <div><button onclick = "searchbytime()" >Insert your a new plan</button></div>
+        <div><input type="text" id="day" value="day" size="100"></div>
+        <div><button onclick = "searchByday()" >Edit your plans</button></div>
+
+
+            
+        <p>Current Data:</p>
+
+            <!-- ol means ordered list -->
+            <p><ol id="locationList"></ol></p>    
+                 
+    </body>
+    
+
+    <!-- HERE IS THE JAVASCRIPT TO CONNECT TO YOUR FIREBASE -->
+    <script>
+
+        // Variables created here to be used throughout the program
+
+        var provider = new firebase.auth.GoogleAuthProvider();
+        var userId = document.getElementById("uid").innerHTML;
+        
+        // Your web app's Firebase configuration that we copy-and-paste from 
+        // the Firebase setup
+        var config = {
+
+
+        apiKey: "AIzaSyDoVTrbQ_vRVUXwx-7fdYnl-kVJO10U7TM",
+        authDomain: "design-10.firebaseapp.com",
+        databaseURL: "https://design-10.firebaseio.com",
+        projectId: "design-10",
+        storageBucket: "design-10.appspot.com",
+        messagingSenderId: "1081349381290",
+        appId: "1:1081349381290:web:9de98802e61470b67744d3",
+        measurementId: "G-E63HEE4H9P"
+          
+        };
+
+        firebase.initializeApp(config);
+        //firebase.analytics();
+
+        // Authentication Check: to see if you are logged in
+        firebase.auth().onAuthStateChanged(function(user) {
+            if (user == null) {
+                document.getElementById("uid").innerHTML = "not logged in";
+                return;
+            } else {
+                userId = user.uid; 
+                document.getElementById("uid").innerHTML = userId; // display Google uid on page
+                
+            } // end user null check
+        }); // end check auth state
+
+
+        // Functions that will be used to "get" and "set" data, among other "helper"
+        // functions too...
+
+        function signin() {
+            var provider = new firebase.auth.GoogleAuthProvider();
+            firebase.auth().signInWithRedirect(provider).then(function(result) { 
+                window.location.replace("fbtest.html");
+            });
+        }         
+
+            }
+ 
+    </script>
+</html>
